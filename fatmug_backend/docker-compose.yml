@@ -1,0 +1,65 @@
+# version: '3.8'
+
+# services:
+#   db:
+#     image: postgres:13
+#     environment:
+#       POSTGRES_DB: postgres
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: nothing
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+      
+#   web:
+#     build: .
+#     command: >
+#       sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+#     volumes:
+#       - .:/app
+#     ports:
+#       - "8000:8000"
+#     depends_on:
+#       - db
+
+# volumes:
+#   postgres_data:
+
+version: '3'
+
+services:
+  backend:
+    image: ajd1996/video_processor:BE
+    container_name: backend-docker
+    ports:
+      - "8000:8000"
+    restart: always
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=nothing
+      - DATABASE_URL=postgres://postgres:nothing@db:5432/postgres
+    depends_on:
+      - db
+
+  frontend:
+    image: ajd1996/video_processor:FR
+    container_name: frontend-docker
+    ports:
+      - "3000:3000"
+    restart: always
+
+  db:
+    image: postgres:13
+    container_name: postgres-docker
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: nothing
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+
+volumes:
+  postgres_data:
